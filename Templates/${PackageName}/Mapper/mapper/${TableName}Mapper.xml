@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--将mapper接口整合到xml中-->
+<mapper namespace="${PackageName}.Mapper.${TableName}Mapper">
+    <select id="selectListOf${TableName}" resultType="${PackageName}.pojo.${TableName}">
+        SELECT  * FROM ${DBName}.${TableName} WHERE ${KeyName}=<#noparse>#{</#noparse>${KeyName}<#noparse>}</#noparse>
+<#noparse>#{</#noparse>start}<#noparse></#noparse> LIMIT <#noparse>#{</#noparse>end}<#noparse></#noparse>
+        </select>
+<delete id="delet${TableName}">
+    DELETE FROM ${DBName}.${TableName} WHERE  ${KeyName}=<#noparse>#{</#noparse>${KeyName}<#noparse>}</#noparse>
+ </delete>
+
+
+    <insert id="insert${TableName}">
+        INSERT INTO ${DBName}.${TableName}(
+        <#list ColumName as colum>
+        ${colum.getColumnName()}<#if colum_has_next>,</#if>
+        </#list>
+        ) VALUES (
+        <#list ColumName as colum>
+<#noparse>#{</#noparse>${colum.getColumnName()}<#noparse>}</#noparse><#if colum_has_next>,</#if>
+        </#list>
+        )
+    </insert>
+    <update id="update${TableName}">
+    UPDATE ${DBName}.${TableName} SET
+    <#list ColumName as colum><#if colum.getColumnName()!=KeyName>
+    ${colum.getColumnName()} =  <#noparse>#{</#noparse>${colum.getColumnName()}<#noparse>}</#noparse><#if colum_has_next>,</#if></#if></#list>
+    WHERE ${KeyName}=<#noparse>#{</#noparse>${KeyName}<#noparse>}</#noparse>
+           </update>
+
+</mapper>

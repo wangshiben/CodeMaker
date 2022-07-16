@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>请选择对应的表</title>
+</head>
+<body>
+<div>
+    <form action="#" th:action="@{/TableChoose}" method="post">
+        <label>请选择要生成的表</label>
+        <select name="Table">
+            <option></option>
+            <option th:each="colum,String:${colums}" th:text="${colum}"></option>
+        </select>
+        <button type="submit">提交</button>
+    </form>
+</div>
+</body>
+</html>

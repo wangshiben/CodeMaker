@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>请选择根据哪一项为临时主键生成代码</title>
+</head>
+<body>
+<div>
+    <label>该表无主键,请选择一项作为临时主键</label>
+    <form action="#" th:action="@{/mainKey}" method="post">
+        <select  name="mainKey">
+            <option></option>
+            <option th:each="cloum,String:${cloum_name}" th:text="${cloum}"></option>
+        </select>
+        <button type="submit">提交</button>
+    </form>
+</div>
+</body>
+</html>

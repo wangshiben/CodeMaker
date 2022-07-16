@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>请选择要操作的数据库</title>
+</head>
+<body>
+<div>
+  <form action="#" th:action="@{/DBchoose}" method="post">
+      <label>请选择数据库</label>
+      <select name="DataBase">
+          <option></option>
+          <option th:each="database,String:${dataBase}" th:text="${database}"></option>
+      </select><br>
+      <label>请输入包名:</label>
+      <input type="text" name="PackageName">
+      <button type="submit">提交</button>
+  </form>
+</div>
+</body>
+</html>

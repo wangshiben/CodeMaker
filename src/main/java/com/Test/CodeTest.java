@@ -1,10 +1,12 @@
 package com.Test;
 
 
+import com.Entity.mailEntity;
 import com.Make.Center;
 import com.Pojo.Column;
 import com.Pojo.DBCConnection;
 import com.Pojo.Table;
+import com.Service.MailService;
 import com.Util.ChangeTypeName;
 import com.Util.JDBCutil;
 import freemarker.cache.FileTemplateLoader;
@@ -138,6 +140,13 @@ public class CodeTest {
     public void Test07(){
 //        Column column =new Column("a","b");
         System.out.println(new DBCConnection().toString());
+    }
+    @Autowired
+    private MailService mailService;
+    @Test
+    public void Test08(){
+        mailEntity mailEntity=new mailEntity("3325118363@qq.com","Test","test",null);
+        mailService.sendHtmlMail(mailEntity);
     }
 
 

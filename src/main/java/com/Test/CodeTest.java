@@ -6,8 +6,8 @@ import com.Make.Center;
 import com.Pojo.Column;
 import com.Pojo.DBCConnection;
 import com.Pojo.Table;
+import com.Resp.BaseRespones;
 import com.Service.MailService;
-import com.Util.ChangeTypeName;
 import com.Util.JDBCutil;
 import freemarker.cache.FileTemplateLoader;
 import freemarker.template.Configuration;
@@ -148,6 +148,15 @@ public class CodeTest {
         mailEntity mailEntity=new mailEntity("3325118363@qq.com","Test","test",null);
         mailService.sendHtmlMail(mailEntity);
     }
+    @Test
+    public void Test09(){
+        String code = UUID.randomUUID().toString();
+        String[] split = code.split("-");
+        System.out.println(Arrays.toString(split));
+
+    }
+
+
 
 
 }

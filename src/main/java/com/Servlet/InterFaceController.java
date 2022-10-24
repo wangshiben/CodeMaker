@@ -109,10 +109,10 @@ public class InterFaceController {
         }
         return BaseRespones.success("获取成功",list);
     }
-    @GetMapping("/makeCode")
+    @GetMapping("/makeCode")//生成文件接口(有主键策略)
     public BaseRespones<Object> CodeMake(HttpSession session,String table_name,String package_name){//生成代码
         DatabaseMetaData metaData = (DatabaseMetaData) session.getAttribute("metaData");//获取元数据
-        String basename = (String) session.getAttribute("basename");
+        String basename = (String) session.getAttribute("basename");//选中数据库的名称
         String keyName=null;
         List<String> list=new ArrayList<>();//字段名称集
         List<Column> lists=new ArrayList<>();//结果
@@ -127,30 +127,46 @@ public class InterFaceController {
                 //获取主键名称，若没有则要手动选择
                 keyName = primaryKeys.getString("COLUMN_NAME");//
             }else {
-                session.setAttribute("column",lists);
-                session.setAttribute("tablename",table_name);
+                session.setAttribute("column",lists);//表中的列名放在session域中
+                session.setAttribute("tablename",table_name);//选中的列名+类型放在session域中
+                session.setAttribute("package_name",package_name);
                 return new BaseRespones<>(300,"无主键,请选择一键作为主键",new Date(System.currentTimeMillis()).toString(),list);
             }
-
-            Table tables=new Table(keyName,table_name,lists);
-
-
-            Map<String,Object> model=new HashMap<>();
-            model.put("PackageName",package_name);
-            model.put("TableName",tables.getTableName());
-            model.put("ColumName",tables.getColumns());
-            model.put("DBName",basename);
-            model.put("KeyName",tables.getKeyName());
-            model.put("KeyType",tables.getKeyType());
-            Center center=new Center(properties.getProperty("templatePath"),properties.getProperty("outPath"));
-            center.scanAndGenerator(model);//生成
-
+         MakeCode(keyName,table_name,lists,package_name,basename);
         } catch (SQLException | TemplateException | IOException e) {
             log.error(e.getMessage());
             return BaseRespones.failed("服务器错误");
         }
         return BaseRespones.success("生成成功",true);
 
+    }
+
+    @GetMapping("/false_name")
+    public BaseRespones<Boolean> False_Email(String key_name,HttpSession session){
+        String basename = (String) session.getAttribute("basename");
+        List<Column> column = (List<Column>) session.getAttribute("column");
+        String tablename = (String) session.getAttribute("tablename");
+        String package_name = (String) session.getAttribute("package_name");
+        try {
+            MakeCode(key_name,tablename,column,package_name,basename);
+        } catch (IOException | TemplateException e) {
+            log.error("生成代码出错:"+e.getMessage());
+            return BaseRespones.failed("生成代码出错:"+e.getMessage());
+        }
+        return BaseRespones.success("生成代码成功请在"+properties.getProperty("outPath")+"下查看");
+    }
+    //生成文件接口
+    private void MakeCode(String keyName,String tableName,List<Column> columns,String package_name,String basename) throws IOException, TemplateException {
+        Table tables=new Table(keyName,tableName,columns);
+        Map<String,Object> model=new HashMap<>();
+        model.put("PackageName",package_name);
+        model.put("TableName",tables.getTableName());
+        model.put("ColumName",tables.getColumns());
+        model.put("DBName",basename);
+        model.put("KeyName",tables.getKeyName());
+        model.put("KeyType",tables.getKeyType());
+        Center center=new Center(properties.getProperty("templatePath"),properties.getProperty("outPath"));
+        center.scanAndGenerator(model);//生成
     }
 
 

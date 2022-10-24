@@ -29,4 +29,5 @@ public class MailServlet {
         mailService.sendHtmlMail(mailEntity);
         return BaseRespones.success("发送邮件成功",true);
     }
+    //
 }

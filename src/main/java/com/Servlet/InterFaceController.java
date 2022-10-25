@@ -168,7 +168,7 @@ public class InterFaceController {
         Center center=new Center(properties.getProperty("templatePath"),properties.getProperty("outPath"));
         center.scanAndGenerator(model);//生成
     }
-//
+
 
 
 

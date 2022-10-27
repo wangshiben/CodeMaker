@@ -21,6 +21,9 @@ public class MailServlet {
     @ResponseBody
     @RequestMapping("/mail")
     public BaseRespones<Boolean> MailSend(String sendto, @RequestParam(defaultValue = "代码生成器验证码") String  title , String words, HttpSession session){
+
+
+
         String code = UUID.randomUUID().toString();
         String[] split = code.split("-");
         words="您本次的验证码为:"+ split[3];

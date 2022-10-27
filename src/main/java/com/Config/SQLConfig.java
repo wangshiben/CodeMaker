@@ -19,8 +19,9 @@ public class SQLConfig {
 @Bean
     public Properties getProper(){
     try {
+        File file = new File("config/TypeName.properties");
         Properties properties=new Properties();
-        FileInputStream inputStream=new FileInputStream(new File("config/TypeName.properties"));
+        FileInputStream inputStream=new FileInputStream(file);
         properties.load(inputStream);
         return properties;
     } catch (IOException e) {

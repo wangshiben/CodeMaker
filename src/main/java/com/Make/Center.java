@@ -32,7 +32,9 @@ public class Center {
             */
     public void scanAndGenerator(Map<String,Object> dataModel) throws IOException, TemplateException {//扫描并生成模板文件
         //1.根据模板路径找到此路径下的所有模板文件
-        List<File> fileList = FileUtils.searchAllFile(new File(templatePath));
+        File files = new File(templatePath);
+
+        List<File> fileList = FileUtils.searchAllFile(files);
         //2.对每个模板进行文件生成
         for (File file : fileList) {
             executeGenertor(dataModel,file);

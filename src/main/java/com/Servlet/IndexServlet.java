@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -126,8 +127,18 @@ public class IndexServlet {
             model.put("DBName",dataBaseName);
             model.put("KeyName",cloum.getKeyName());
             model.put("KeyType",cloum.getKeyType());
+            model.put("UpperTable",cloum.getUpperTable());
 //            columns.getString();
-            Center center=new Center(properties.getProperty("templatePath"),properties.getProperty("outPath"));
+            String templatePath = properties.getProperty("templatePath");
+
+            File file=new File(templatePath);
+            String absolutePath = file.getAbsolutePath();//获取绝对路径名称,不然会报错
+            String outPath = properties.getProperty("outPath");
+            File file1 =new File(outPath);
+            String absolutePath1 = file1.getAbsolutePath();
+
+            log.info(file.getAbsolutePath());//打印模板的绝对路径
+            Center center=new Center(absolutePath,absolutePath1);
             center.scanAndGenerator(model);//生成
         } catch (SQLException e) {
             e.printStackTrace();
@@ -151,6 +162,7 @@ public class IndexServlet {
         model.put("DBName",dataBaseName);
         model.put("KeyName",cloum.getKeyName());
         model.put("KeyType",cloum.getKeyType());
+        model.put("UpperTable",cloum.getUpperTable());//大写
 //            columns.getString();
         try {
             Center center=new Center(properties.getProperty("templatePath"),properties.getProperty("outPath"));

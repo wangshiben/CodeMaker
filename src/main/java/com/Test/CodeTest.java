@@ -16,6 +16,7 @@ import freemarker.template.TemplateException;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.sql.DataSource;
@@ -155,6 +156,18 @@ public class CodeTest {
         System.out.println(Arrays.toString(split));
 
     }
+    @Autowired
+    @Qualifier("getProper")
+    private Properties properties;
+    @Test
+    public void Test10(){
+        String templatePath = properties.getProperty("templatePath");
+        File file=new File(templatePath);
+        String path = file.getAbsolutePath();
+        System.out.println(path);
+    }
+
+
 
 
 

@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.Nullable;
-import ${PackageName}.pojo.${TableName};
+import ${PackageName}.pojo.${UpperTable};
 import java.util.List;
 
 @Slf4j
@@ -17,12 +17,12 @@ public class ${TableName}Controller{
 @Autowired
 private ${TableName}Service  ${TableName}Service;
 @PostMapping("/insert")
-public Integer insert${TableName}( @RequestBody ${TableName} ${TableName}){//插入数据的路径
+public Integer insert${TableName}( @RequestBody ${UpperTable} ${TableName}){//插入数据的路径
         log.info("insert:"+ ${TableName}.toString());
         return ${TableName}Service.insert${TableName}(${TableName});
         }
 @PostMapping("/update")
-public Integer update${TableName}(@Nullable ${TableName} ${TableName}){
+public Integer update${TableName}(@Nullable ${UpperTable} ${TableName}){
         log.info("update:" + ${TableName}.toString());
         return ${TableName}Service.update${TableName}(${TableName});
         }//更新/修改
@@ -33,14 +33,14 @@ public void delet${TableName}(${KeyType} ${KeyName}){
         }//删除
 
 @GetMapping("/select")
-public List<${TableName}> selectListOf(${KeyType} ${KeyName},Integer start, Integer end){//查询
+public List<${UpperTable}> selectListOf(${KeyType} ${KeyName},Integer start, Integer end){//查询
         if(start==null){
             start=0;
         }
         if(end==null){
             end=start+10;
         }
-        List<${TableName}> list = ${TableName}Service.selectListOf${TableName}(${KeyName},start,end);
+        List<${UpperTable}> list = ${TableName}Service.selectListOf${TableName}(${KeyName},start,end);
         log.info(list.toString());
         return list;
 

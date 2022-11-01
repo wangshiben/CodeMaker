@@ -6,6 +6,7 @@ import com.Pojo.DBCConnection;
 import com.Pojo.Table;
 import com.Resp.BaseRespones;
 import com.Util.ChangeTypeName;
+import com.Util.FileUtils;
 import com.Util.JDBCutil;
 import freemarker.template.TemplateException;
 import lombok.extern.slf4j.Slf4j;
@@ -14,15 +15,18 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.TransferQueue;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @RestController
 @Slf4j
@@ -156,6 +160,21 @@ public class InterFaceController {
         }
         return BaseRespones.success("生成代码成功请在"+properties.getProperty("outPath")+"下查看");
     }
+    @GetMapping("/makezip/{name}")
+    public BaseRespones<Boolean> makeZip(HttpServletResponse response,@PathVariable("name")String name){
+        log.info("MakeZip:"+name);
+        try {
+            ServletOutputStream outputStream = response.getOutputStream();
+            MakeZIP(properties,outputStream);
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            return BaseRespones.failed("fail:"+name+":"+e.getMessage(),false);
+        }
+        return BaseRespones.success("sucess:"+name,true);
+    }
+
+
+
     //生成文件接口
     private void MakeCode(String keyName,String tableName,List<Column> columns,String package_name,String basename) throws IOException, TemplateException {
         Table tables=new Table(keyName,tableName,columns);
@@ -179,6 +198,51 @@ public class InterFaceController {
         Center center=new Center(absolutePath,absolutePath1);
         center.scanAndGenerator(model);//生成
     }
+
+    public static void MakeZIP(Properties properties,OutputStream outputStream) throws IOException {//生成ZIP包,前提:未改变文件位置
+        byte[]data=new byte[1024];
+        String outPath = properties.getProperty("outPath");
+        File root=new File(outPath);
+        outPath=root.getAbsolutePath();
+        List<File> list=new LinkedList<>();
+//        FileOutputStream outputStream=new FileOutputStream("测试.zip");
+        FileUtils.searchFiles(root,list);//生成集合
+        ZipOutputStream zipOutputStream=new ZipOutputStream(outputStream);
+        BufferedInputStream inputStream=null;
+        for (File file : list) {
+            inputStream =new BufferedInputStream(new FileInputStream(file));
+            String replace = file.getAbsolutePath();
+            String s = replaceAbs(outPath, replace);
+            ZipEntry entry=new ZipEntry(s);
+            zipOutputStream.putNextEntry(entry);//添加实体
+            while (inputStream.read(data)>0){
+                zipOutputStream.write(data);
+            }
+            inputStream.close();//关闭Input流
+            zipOutputStream.closeEntry();
+        }
+        zipOutputStream.close();
+    }
+    private static String replaceAbs(String origin,String replaceMeant){
+        String[] split = origin.split("\\\\");
+        String[] split1 = replaceMeant.split("\\\\");
+        int index=0;
+        for (; index < split.length; index++) {
+            if (!split[index].equals(split1[index])){
+                break;
+            }
+        }
+        StringBuilder sb=new StringBuilder();
+        for (int i = index; i < split1.length; i++) {
+            sb.append("\\\\").append(split1[i]);
+        }
+        return sb.toString();
+
+
+    }
+
+
+
 
 
 

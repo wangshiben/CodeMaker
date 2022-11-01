@@ -8,6 +8,7 @@ import com.Pojo.DBCConnection;
 import com.Pojo.Table;
 import com.Resp.BaseRespones;
 import com.Service.MailService;
+import com.Servlet.InterFaceController;
 import com.Util.JDBCutil;
 import freemarker.cache.FileTemplateLoader;
 import freemarker.template.Configuration;
@@ -20,10 +21,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.sql.DataSource;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.sql.*;
 import java.util.*;
 
@@ -165,6 +163,17 @@ public class CodeTest {
         File file=new File(templatePath);
         String path = file.getAbsolutePath();
         System.out.println(path);
+    }
+
+
+    @Test
+    public void Test11(){
+        try {
+            FileOutputStream outputStream=new FileOutputStream("测试.zip");
+            InterFaceController.MakeZIP(properties,outputStream);
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
     }
 
 

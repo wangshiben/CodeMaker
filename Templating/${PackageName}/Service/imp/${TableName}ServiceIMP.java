@@ -15,18 +15,27 @@ import java.util.List;
 public class ${TableName}ServiceIMP implements  ${TableName}Service {
     @Autowired
     private ${TableName}Mapper ${TableName}Mapper;
+@Override
 public Integer insert${TableName}(${UpperTable} ${TableName}){
         return ${TableName}Mapper.insert${TableName}(${TableName});
         }//添加
+@Override
 public Integer update${TableName}(${UpperTable} ${TableName}){
         return ${TableName}Mapper.update${TableName}(${TableName});
         }//更新/修改
+@Override
 public void delet${TableName}(${KeyType} ${KeyName}){
         ${TableName}Mapper.delet${TableName}(${KeyName});
         }//删除
-public List<${UpperTable}> selectListOf${TableName}(${KeyType} ${KeyName},Integer start, Integer end){
-        return ${TableName}Mapper.selectListOf${TableName}( ${KeyName},start,end);
-        }//查询
+@Override
+public List<${UpperTable}> selectListOf${TableName}(Integer start, Integer end){
+        return ${TableName}Mapper.selectListOf${TableName}( start,end);
+        }
+        //查询单个
+@Override
+        public ${UpperTable} selectSingleOf${TableName}(${KeyType} ${KeyName}){
+    return ${TableName}Mapper.selectSingleOf${TableName}( ${KeyName});
+        }
 
 
 }

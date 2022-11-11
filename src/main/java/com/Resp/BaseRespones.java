@@ -9,14 +9,14 @@ import java.util.Date;
 public class BaseRespones<T> {
     private int code;//状态码
     private String message;//信息
-    private String data;//日期时间戳
-    private T date;//具体数据
+    private String date;//日期时间戳
+    private T data;//具体数据
 
-    public BaseRespones(int code, String message, String data, T date) {
+    public BaseRespones(int code, String message, String date, T data) {
         this.code = code;
         this.message = message;
-        this.data = data;
         this.date = date;
+        this.data = data;
     }
 
     public static <T>  BaseRespones<T> success(){

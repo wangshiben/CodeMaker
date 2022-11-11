@@ -8,6 +8,8 @@ import com.Resp.BaseRespones;
 import com.Util.ChangeTypeName;
 import com.Util.FileUtils;
 import com.Util.JDBCutil;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import freemarker.template.TemplateException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,13 +38,14 @@ public class InterFaceController {
     private Properties properties;
     @Value("${spring.datasource.url}")
     String url;//数据库地址
-    @Value("spring.datasource.username")
+    @Value("${spring.datasource.username}")
     String userName;//用户名
     @Value("${spring.datasource.password}")
     String password;
 
     @GetMapping("/isconnect")
     public BaseRespones<Boolean> IsConnect(HttpSession session){
+        log.info("sessionID:"+session.getId());
         if (url==null||userName==null||password==null){
         return BaseRespones.failed("数据库连接失败:未设置数据库参数",false);
         }else {
@@ -65,8 +68,19 @@ public class InterFaceController {
         }
     }
     @PostMapping("/connect")
-    public BaseRespones<Boolean> Connect(HttpSession session, @RequestBody String url,@RequestBody String user,@RequestBody String password){//手动获取连接
+    public BaseRespones<Boolean> Connect(HttpSession session,
+                                         @RequestBody String url,
+                                         @RequestBody(required = false) String user,@RequestBody(required = false) String password){//手动获取连接
+        log.info("sessionID:"+session.getId());
         Connection connection=null;
+        if (user==null||password==null){
+            if (url!=null){
+                JSONObject jsonObject = JSON.parseObject(url);
+                url = (String)jsonObject.get("url");
+                user=(String) jsonObject.get("user");
+                password=(String) jsonObject.get("password");
+            }
+        }
         try {
             connection = JDBCutil.getConnection(url, new DBCConnection(user, password));
         } catch (SQLException | ClassNotFoundException e) {
@@ -85,6 +99,7 @@ public class InterFaceController {
     }
     @GetMapping("/database/get_db")
     public BaseRespones<List<String>> GetAllDB(HttpSession session){//获取所有数据库名称
+        log.info("sessionID:"+session.getId());
         DatabaseMetaData metaData = (DatabaseMetaData) session.getAttribute("metaData");
         List<String> lists=new ArrayList<>();
         try {
@@ -100,6 +115,7 @@ public class InterFaceController {
     }
     @GetMapping("/database/get_all")
     public BaseRespones<List<String>> GetAllTable(HttpSession session,String database){//获取所有数据库中的所有表名称
+        log.info("sessionID:"+session.getId());
         DatabaseMetaData metaData = (DatabaseMetaData) session.getAttribute("metaData");
         session.setAttribute("basename",database);
         ResultSet tables;
@@ -116,6 +132,7 @@ public class InterFaceController {
     }
     @GetMapping("/makeCode")//生成文件接口(有主键策略)
     public BaseRespones<Object> CodeMake(HttpSession session,String table_name,String package_name){//生成代码
+        log.info("sessionID:"+session.getId());
         DatabaseMetaData metaData = (DatabaseMetaData) session.getAttribute("metaData");//获取元数据
         String basename = (String) session.getAttribute("basename");//选中数据库的名称
         String keyName=null;

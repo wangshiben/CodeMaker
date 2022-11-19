@@ -20,36 +20,36 @@ private ${TableName}Service  ${TableName}Service;
 public BaseRespones<Integer> insert${TableName}( @RequestBody ${UpperTable} ${TableName}){//插入数据的路径
         log.info("insert:"+ ${TableName}.toString());
 
-        return BaseRespones.success( ${TableName}Service.insert${TableName}(${TableName}));
+        return BaseRespones.success( ${TableName}Service.insert${UpperTable}(${TableName}));
         }
 @PostMapping("/update")
 public BaseRespones<Integer> update${TableName}(@Nullable ${UpperTable} ${TableName}){
         log.info("update:" + ${TableName}.toString());
-        return BaseRespones.success(${TableName}Service.update${TableName}(${TableName}));
+        return BaseRespones.success(${TableName}Service.update${UpperTable}(${TableName}));
         }//更新/修改
 @RequestMapping("/delet")
 public BaseRespones<Integer> delet${TableName}(${KeyType} ${KeyName}){
         log.info("delete:" + ${KeyName}.toString());
-        ${TableName}Service.delet${TableName}(${KeyName});
+        return BaseRespones.success(${TableName}Service.delete${UpperTable}(${KeyName}));
         }//删除
 
 @GetMapping("/select")
-public BaseRespones<List<${UpperTable}> > selectListOf(Integer start, Integer end){//查询
+public BaseRespones<List< ${UpperTable}> > selectListOf(Integer start, Integer size){//查询所有
         if(start==null){
             start=0;
         }
-        if(end==null){
-            end=start+10;
+        if(size==null){
+                size=start+10;
         }
-        List<${UpperTable}> list = ${TableName}Service.selectListOf${TableName}(start,end);
+        List<${UpperTable}> list = ${TableName}Service.selectListOf${UpperTable}(start,size);
         log.info(list.toString());
         return BaseRespones.success(list);
 
         }
         @GetMapping("/single")
         public BaseRespones<${UpperTable}>  selectSingleOf${TableName}(${KeyType} ${KeyName}){
-                ${UpperTable} ${TableName} = ${TableName}Service.selectSingleOf${TableName}(${KeyType} ${KeyName});
-                log.info(${TableName});
+                ${UpperTable} ${TableName} = ${TableName}Service.selectSingleOf${UpperTable}(${KeyName});
+                log.info(${TableName}.toString());
                 return BaseRespones.success(${TableName});
         }
 

@@ -5,9 +5,7 @@ import com.Pojo.Column;
 import com.Pojo.DBCConnection;
 import com.Pojo.Table;
 import com.Resp.BaseRespones;
-import com.Util.ChangeTypeName;
-import com.Util.FileUtils;
-import com.Util.JDBCutil;
+import com.Util.*;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import freemarker.template.TemplateException;
@@ -26,13 +24,16 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.concurrent.TransferQueue;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 @RestController
 @Slf4j
 public class InterFaceController {
+
+    private Map<String,HttpSession> sessionConetext= SessionMapUtil.getMap();
+
+
     @Autowired
     @Qualifier("getProper")
     private Properties properties;
@@ -44,7 +45,10 @@ public class InterFaceController {
     String password;
 
     @GetMapping("/isconnect")
-    public BaseRespones<Boolean> IsConnect(HttpSession session){
+    public BaseRespones<Boolean> IsConnect(HttpSession session,@RequestParam("JSESSIONID") String sessionID){
+        log.info("传入jessionID:"+ sessionID);
+        session = SessionMapUtil.getSession(sessionID,session);
+
         log.info("sessionID:"+session.getId());
         if (url==null||userName==null||password==null){
         return BaseRespones.failed("数据库连接失败:未设置数据库参数",false);
@@ -68,17 +72,24 @@ public class InterFaceController {
         }
     }
     @PostMapping("/connect")
-    public BaseRespones<Boolean> Connect(HttpSession session,
+    public BaseRespones<Boolean> Connect(HttpSession session,@RequestParam("JSESSIONID") String sessionID,
                                          @RequestBody String url,
                                          @RequestBody(required = false) String user,@RequestBody(required = false) String password){//手动获取连接
+        log.info("传入jessionID:"+ sessionID);
+        session = SessionMapUtil.getSession(sessionID,session);
+//        sessionConetext.put(sessionID,session);
         log.info("sessionID:"+session.getId());
+        log.info("获得数据:"+url);
         Connection connection=null;
         if (user==null||password==null){
             if (url!=null){
+
                 JSONObject jsonObject = JSON.parseObject(url);
                 url = (String)jsonObject.get("url");
                 user=(String) jsonObject.get("user");
+
                 password=(String) jsonObject.get("password");
+
             }
         }
         try {
@@ -95,10 +106,13 @@ public class InterFaceController {
             return BaseRespones.failed("获取数据库元数据失败",false);
         }
         session.setAttribute("metaData",metaData);
-        return BaseRespones.success("数据库连接成功", true);
+        return BaseRespones.success(sessionID, true);
     }
     @GetMapping("/database/get_db")
-    public BaseRespones<List<String>> GetAllDB(HttpSession session){//获取所有数据库名称
+    public BaseRespones<List<String>> GetAllDB(HttpSession session,@RequestParam("JSESSIONID") String sessionID){//获取所有数据库名称
+
+        log.info("传入jessionID:"+ sessionID);
+        session = SessionMapUtil.getSession(sessionID,session);
         log.info("sessionID:"+session.getId());
         DatabaseMetaData metaData = (DatabaseMetaData) session.getAttribute("metaData");
         List<String> lists=new ArrayList<>();
@@ -114,7 +128,10 @@ public class InterFaceController {
         return BaseRespones.success("获取所有数据成功",lists);
     }
     @GetMapping("/database/get_all")
-    public BaseRespones<List<String>> GetAllTable(HttpSession session,String database){//获取所有数据库中的所有表名称
+    public BaseRespones<List<String>> GetAllTable(HttpSession session,String database,@RequestParam("JSESSIONID") String sessionID){//获取所有数据库中的所有表名称
+        log.info("传入jessionID:"+ sessionID);
+        session = SessionMapUtil.getSession(sessionID,session);
+        log.info("dataBase:"+database);
         log.info("sessionID:"+session.getId());
         DatabaseMetaData metaData = (DatabaseMetaData) session.getAttribute("metaData");
         session.setAttribute("basename",database);
@@ -127,11 +144,18 @@ public class InterFaceController {
             }
         } catch (SQLException e) {
             log.error(e.getMessage());
+            BaseRespones.failed(e.getMessage());
         }
+
+
         return BaseRespones.success("获取成功",list);
     }
     @GetMapping("/makeCode")//生成文件接口(有主键策略)
-    public BaseRespones<Object> CodeMake(HttpSession session,String table_name,String package_name){//生成代码
+    public BaseRespones<Object> CodeMake(HttpSession session,String table_name,String package_name,@RequestParam("JSESSIONID") String sessionID){//生成代码
+        log.info("传入jessionID:"+ sessionID);
+        session = SessionMapUtil.getSession(sessionID,session);
+        log.info("table_name:"+table_name);
+        log.info("package_name:"+package_name);
         log.info("sessionID:"+session.getId());
         DatabaseMetaData metaData = (DatabaseMetaData) session.getAttribute("metaData");//获取元数据
         String basename = (String) session.getAttribute("basename");//选中数据库的名称
@@ -153,8 +177,8 @@ public class InterFaceController {
                 session.setAttribute("tablename",table_name);//选中的列名+类型放在session域中
                 session.setAttribute("package_name",package_name);
                 return new BaseRespones<>(300,"无主键,请选择一键作为主键",new Date(System.currentTimeMillis()).toString(),list);
-            }
-         MakeCode(keyName,table_name,lists,package_name,basename);
+            }//keyName,table_name,lists,package_name,basename
+         MakerUtils.MakeCode(keyName,table_name,lists,package_name,basename,properties,log);
         } catch (SQLException | TemplateException | IOException e) {
             log.error(e.getMessage());
             return BaseRespones.failed("服务器错误");
@@ -164,13 +188,17 @@ public class InterFaceController {
     }
 
     @GetMapping("/false_name")
-    public BaseRespones<Boolean> False_Email(String key_name,HttpSession session){
+    public BaseRespones<Boolean> False_Email(String key_name,HttpSession session,@RequestParam("JSESSIONID") String sessionID){
+
+        log.info("传入jessionID:"+ sessionID);
+        log.info("key_name:"+key_name);
+        session = SessionMapUtil.getSession(sessionID,session);
         String basename = (String) session.getAttribute("basename");
         List<Column> column = (List<Column>) session.getAttribute("column");
         String tablename = (String) session.getAttribute("tablename");
         String package_name = (String) session.getAttribute("package_name");
-        try {
-            MakeCode(key_name,tablename,column,package_name,basename);
+        try {//key_name,tablename,column,package_name,basename
+            MakerUtils.MakeCode(key_name,tablename,column,package_name,basename,properties,log);
         } catch (IOException | TemplateException e) {
             log.error("生成代码出错:"+e.getMessage());
             return BaseRespones.failed("生成代码出错:"+e.getMessage());
@@ -178,11 +206,11 @@ public class InterFaceController {
         return BaseRespones.success("生成代码成功请在"+properties.getProperty("outPath")+"下查看");
     }
     @GetMapping("/makezip/{name}")
-    public BaseRespones<Boolean> makeZip(HttpServletResponse response,@PathVariable("name")String name){
+    public BaseRespones<Boolean> makeZip(HttpServletResponse response, @PathVariable("name") String name){
         log.info("MakeZip:"+name);
         try {
             ServletOutputStream outputStream = response.getOutputStream();
-            MakeZIP(properties,outputStream);
+            MakerUtils.MakeZIP(properties,outputStream);
         } catch (IOException e) {
             log.error(e.getMessage());
             return BaseRespones.failed("fail:"+name+":"+e.getMessage(),false);
@@ -191,72 +219,6 @@ public class InterFaceController {
     }
 
 
-
-    //生成文件接口
-    private void MakeCode(String keyName,String tableName,List<Column> columns,String package_name,String basename) throws IOException, TemplateException {
-        Table tables=new Table(keyName,tableName,columns);
-        Map<String,Object> model=new HashMap<>();
-        model.put("PackageName",package_name);
-        model.put("TableName",tables.getTableName());
-        model.put("ColumName",tables.getColumns());
-        model.put("DBName",basename);
-        model.put("KeyName",tables.getKeyName());
-        model.put("KeyType",tables.getKeyType());
-        model.put("UpperTable",tables.getUpperTable());//大写
-
-        String templatePath = properties.getProperty("templatePath");
-        File file=new File(templatePath);
-        String absolutePath = file.getAbsolutePath();//获取模板名称的绝对路径名称,不然会报错
-        String outPath = properties.getProperty("outPath");
-        File file1 =new File(outPath);
-        String absolutePath1 = file1.getAbsolutePath();//获取输出名称的绝对路径,不然会报错
-
-        log.info(file.getAbsolutePath());//打印模板的绝对路径
-        Center center=new Center(absolutePath,absolutePath1);
-        center.scanAndGenerator(model);//生成
-    }
-
-    public static void MakeZIP(Properties properties,OutputStream outputStream) throws IOException {//生成ZIP包,前提:未改变文件位置
-        byte[]data=new byte[1024];
-        String outPath = properties.getProperty("outPath");
-        File root=new File(outPath);
-        outPath=root.getAbsolutePath();
-        List<File> list=new LinkedList<>();
-//        FileOutputStream outputStream=new FileOutputStream("测试.zip");
-        FileUtils.searchFiles(root,list);//生成集合
-        ZipOutputStream zipOutputStream=new ZipOutputStream(outputStream);
-        BufferedInputStream inputStream=null;
-        for (File file : list) {
-            inputStream =new BufferedInputStream(new FileInputStream(file));
-            String replace = file.getAbsolutePath();
-            String s = replaceAbs(outPath, replace);
-            ZipEntry entry=new ZipEntry(s);
-            zipOutputStream.putNextEntry(entry);//添加实体
-            while (inputStream.read(data)>0){
-                zipOutputStream.write(data);
-            }
-            inputStream.close();//关闭Input流
-            zipOutputStream.closeEntry();
-        }
-        zipOutputStream.close();
-    }
-    private static String replaceAbs(String origin,String replaceMeant){
-        String[] split = origin.split("\\\\");
-        String[] split1 = replaceMeant.split("\\\\");
-        int index=0;
-        for (; index < split.length; index++) {
-            if (!split[index].equals(split1[index])){
-                break;
-            }
-        }
-        StringBuilder sb=new StringBuilder();
-        for (int i = index; i < split1.length; i++) {
-            sb.append("\\\\").append(split1[i]);
-        }
-        return sb.toString();
-
-
-    }
 
 
 

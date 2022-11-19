@@ -13,7 +13,7 @@ public class JDBCutil {
         String urls="com.mysql.cj.jdbc.Driver";
         String URL="jdbc:mysql://?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true";
         String userNme="root";
-        String password="13qe4r5t";
+        String password="";
         Properties properties=new Properties();
         properties.put("user",userNme);
         properties.put("password",password);

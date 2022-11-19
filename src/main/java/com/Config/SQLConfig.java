@@ -5,11 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 @Component
@@ -29,4 +32,10 @@ public class SQLConfig {
     }
     return null;
 }
+
+@Bean
+    public Map<String, HttpSession> SessionContext(){
+    return new HashMap<>();
+}
+
 }

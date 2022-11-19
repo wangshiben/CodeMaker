@@ -1,13 +1,15 @@
 package com.Servlet;
 
-import com.Make.Center;
+
 import com.Pojo.Column;
 import com.Pojo.Table;
 import com.Pojo.DBCConnection;
 import com.Util.ChangeTypeName;
+
 import com.Util.JDBCutil;
+import com.Util.MakerUtils;
 import freemarker.template.TemplateException;
-import lombok.NonNull;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -16,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.io.File;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -119,27 +121,7 @@ public class IndexServlet {
             assert column_name!=null;
             com.Pojo.Table cloum=new Table(column_name,Table,lists);//获取到完整对象
             String packageName = (String) session.getAttribute("PackageName");//获取到包名
-            //调用生成方法
-            Map<String,Object> model=new HashMap<>();
-            model.put("PackageName",packageName);
-            model.put("TableName",cloum.getTableName());
-            model.put("ColumName",cloum.getColumns());
-            model.put("DBName",dataBaseName);
-            model.put("KeyName",cloum.getKeyName());
-            model.put("KeyType",cloum.getKeyType());
-            model.put("UpperTable",cloum.getUpperTable());
-//            columns.getString();
-            String templatePath = properties.getProperty("templatePath");
-
-            File file=new File(templatePath);
-            String absolutePath = file.getAbsolutePath();//获取绝对路径名称,不然会报错
-            String outPath = properties.getProperty("outPath");
-            File file1 =new File(outPath);
-            String absolutePath1 = file1.getAbsolutePath();
-
-            log.info(file.getAbsolutePath());//打印模板的绝对路径
-            Center center=new Center(absolutePath,absolutePath1);
-            center.scanAndGenerator(model);//生成
+            MakerUtils.MakeCode(column_name,Table,lists,packageName,baseName,properties,log);
         } catch (SQLException e) {
             e.printStackTrace();
             log.error(e.getMessage());
@@ -155,18 +137,9 @@ public class IndexServlet {
         String packageName = (String) session.getAttribute("PackageName");//获取到包名
         List<Column> lists = (List<Column>) session.getAttribute("column");
         Table cloum=new Table(mainKey,table,lists);
-        Map<String,Object> model=new HashMap<>();
-        model.put("PackageName",packageName);
-        model.put("TableName",cloum.getTableName());
-        model.put("ColumName",cloum.getColumns());
-        model.put("DBName",dataBaseName);
-        model.put("KeyName",cloum.getKeyName());
-        model.put("KeyType",cloum.getKeyType());
-        model.put("UpperTable",cloum.getUpperTable());//大写
 //            columns.getString();
         try {
-            Center center=new Center(properties.getProperty("templatePath"),properties.getProperty("outPath"));
-            center.scanAndGenerator(model);//生成
+            MakerUtils.MakeCode(mainKey,table,lists,packageName,dataBaseName,properties,log);
         } catch (Exception e) {
             e.printStackTrace();
         }

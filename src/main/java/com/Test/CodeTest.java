@@ -170,15 +170,11 @@ public class CodeTest {
     public void Test11(){
         try {
             FileOutputStream outputStream=new FileOutputStream("测试.zip");
-            InterFaceController.MakeZIP(properties,outputStream);
+//            InterFaceController.MakeZIP(properties,outputStream);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
-
-
-
-
 
 
 }

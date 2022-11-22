@@ -3,7 +3,7 @@ package ${PackageName}.Service;
 import ${PackageName}.pojo.${UpperTable};
 import java.util.List;
 
-public interface ${TableName}Service {
+public interface ${UpperTable}Service {
 //增删改查
     public Integer insert${UpperTable}(${UpperTable} ${TableName});//添加
     public Integer update${UpperTable}(${UpperTable} ${TableName});//更新/修改

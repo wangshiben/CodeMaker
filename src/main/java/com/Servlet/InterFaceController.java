@@ -48,7 +48,6 @@ public class InterFaceController {
     public BaseRespones<Boolean> IsConnect(HttpSession session,@RequestParam("JSESSIONID") String sessionID){
         log.info("传入jessionID:"+ sessionID);
         session = SessionMapUtil.getSession(sessionID,session);
-
         log.info("sessionID:"+session.getId());
         if (url==null||userName==null||password==null){
         return BaseRespones.failed("数据库连接失败:未设置数据库参数",false);
@@ -178,7 +177,13 @@ public class InterFaceController {
                 session.setAttribute("package_name",package_name);
                 return new BaseRespones<>(300,"无主键,请选择一键作为主键",new Date(System.currentTimeMillis()).toString(),list);
             }//keyName,table_name,lists,package_name,basename
-         MakerUtils.MakeCode(keyName,table_name,lists,package_name,basename,properties,log);
+
+            boolean online = Boolean.parseBoolean(properties.getProperty("online"));
+            if (online){//判断是否为线上部署
+                MakerUtils.MakeCode(keyName,table_name,lists,package_name,basename,properties,log, session.getId());
+            }else {
+                MakerUtils.MakeCode(keyName,table_name,lists,package_name,basename,properties,log);
+            }
         } catch (SQLException | TemplateException | IOException e) {
             log.error(e.getMessage());
             return BaseRespones.failed("服务器错误");
@@ -198,7 +203,13 @@ public class InterFaceController {
         String tablename = (String) session.getAttribute("tablename");
         String package_name = (String) session.getAttribute("package_name");
         try {//key_name,tablename,column,package_name,basename
-            MakerUtils.MakeCode(key_name,tablename,column,package_name,basename,properties,log);
+            boolean online = Boolean.parseBoolean(properties.getProperty("online"));
+            if (online){//判断是否为线上部署
+                MakerUtils.MakeCode(key_name,tablename,column,package_name,basename,properties,log, session.getId());
+            }else {
+                MakerUtils.MakeCode(key_name,tablename,column,package_name,basename,properties,log);
+            }
+
         } catch (IOException | TemplateException e) {
             log.error("生成代码出错:"+e.getMessage());
             return BaseRespones.failed("生成代码出错:"+e.getMessage());
@@ -206,11 +217,20 @@ public class InterFaceController {
         return BaseRespones.success("生成代码成功请在"+properties.getProperty("outPath")+"下查看");
     }
     @GetMapping("/makezip/{name}")
-    public BaseRespones<Boolean> makeZip(HttpServletResponse response, @PathVariable("name") String name){
+    public BaseRespones<Boolean> makeZip(HttpServletResponse response,HttpSession session ,
+                                         @PathVariable("name") String name,
+                                         @RequestParam("JSESSIONID") String sessionID){
+        session = SessionMapUtil.getSession(sessionID,session);
         log.info("MakeZip:"+name);
         try {
+            boolean online = Boolean.parseBoolean(properties.getProperty("online"));
             ServletOutputStream outputStream = response.getOutputStream();
-            MakerUtils.MakeZIP(properties,outputStream);
+            if (online){
+                log.info(session.getId());
+                MakerUtils.MakeZIP(properties, outputStream,session.getId());
+            }else {
+                MakerUtils.MakeZIP(properties, outputStream);
+            }
         } catch (IOException e) {
             log.error(e.getMessage());
             return BaseRespones.failed("fail:"+name+":"+e.getMessage(),false);

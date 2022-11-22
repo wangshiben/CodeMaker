@@ -2,7 +2,7 @@ package ${PackageName}.Servlet;
 
 
 import ${PackageName}.Resp.BaseRespones;
-import ${PackageName}.Service.${TableName}Service;
+import ${PackageName}.Service.${UpperTable}Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
@@ -13,22 +13,22 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("${TableName}")
-public class ${TableName}Controller{
+public class ${UpperTable}Controller{
 @Autowired
-private ${TableName}Service  ${TableName}Service;
+private ${UpperTable}Service  ${TableName}Service;
 @PostMapping("/insert")
-public BaseRespones<Integer> insert${TableName}( @RequestBody ${UpperTable} ${TableName}){//插入数据的路径
+public BaseRespones<Integer> insert${UpperTable}( @RequestBody ${UpperTable} ${TableName}){//插入数据的路径
         log.info("insert:"+ ${TableName}.toString());
 
         return BaseRespones.success( ${TableName}Service.insert${UpperTable}(${TableName}));
         }
 @PostMapping("/update")
-public BaseRespones<Integer> update${TableName}(@Nullable ${UpperTable} ${TableName}){
+public BaseRespones<Integer> update${UpperTable}(@Nullable ${UpperTable} ${TableName}){
         log.info("update:" + ${TableName}.toString());
         return BaseRespones.success(${TableName}Service.update${UpperTable}(${TableName}));
         }//更新/修改
 @RequestMapping("/delet")
-public BaseRespones<Integer> delet${TableName}(${KeyType} ${KeyName}){
+public BaseRespones<Integer> delet${UpperTable}(${KeyType} ${KeyName}){
         log.info("delete:" + ${KeyName}.toString());
         return BaseRespones.success(${TableName}Service.delete${UpperTable}(${KeyName}));
         }//删除

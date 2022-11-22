@@ -3,20 +3,20 @@ package ${PackageName}.Service.imp;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import ${PackageName}.pojo.${UpperTable};
-import ${PackageName}.Mapper.${TableName}Mapper;
+import ${PackageName}.Mapper.${UpperTable}Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ${PackageName}.Service.${TableName}Service;
+import ${PackageName}.Service.${UpperTable}Service;
 import java.util.List;
 
 
 
 @Service
 @Transactional
-public class ${TableName}ServiceIMP implements  ${TableName}Service {
+public class ${UpperTable}ServiceIMP implements  ${UpperTable}Service {
     @Autowired
-    private ${TableName}Mapper ${TableName}Mapper;
+    private ${UpperTable}Mapper ${TableName}Mapper;
 @Override
 public Integer insert${UpperTable}(${UpperTable} ${TableName}){
         return ${TableName}Mapper.insert(${TableName});

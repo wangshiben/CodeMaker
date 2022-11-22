@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 @Mapper
-public interface ${TableName}Mapper extends BaseMapper<${UpperTable}>{
+public interface ${UpperTable}Mapper extends BaseMapper<${UpperTable}>{
 
 
 }

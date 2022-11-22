@@ -119,9 +119,13 @@ public class IndexServlet {
                 return "CloumnChoose";
             }
             assert column_name!=null;
-            com.Pojo.Table cloum=new Table(column_name,Table,lists);//获取到完整对象
             String packageName = (String) session.getAttribute("PackageName");//获取到包名
-            MakerUtils.MakeCode(column_name,Table,lists,packageName,baseName,properties,log);
+            boolean online = Boolean.parseBoolean(properties.getProperty("online"));
+            if (online){//判断是否为线上部署
+                MakerUtils.MakeCode(column_name,Table,lists,packageName,baseName,properties,log, session.getId());
+            }else {
+                MakerUtils.MakeCode(column_name, Table, lists, packageName, baseName, properties, log);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
             log.error(e.getMessage());
@@ -139,7 +143,13 @@ public class IndexServlet {
         Table cloum=new Table(mainKey,table,lists);
 //            columns.getString();
         try {
-            MakerUtils.MakeCode(mainKey,table,lists,packageName,dataBaseName,properties,log);
+            boolean online = Boolean.parseBoolean(properties.getProperty("online"));
+            if (online){//判断是否为线上部署
+                MakerUtils.MakeCode(mainKey,table,lists,packageName,dataBaseName,properties,log, session.getId());
+            }else {
+                MakerUtils.MakeCode(mainKey,table,lists,packageName,dataBaseName,properties,log);
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }

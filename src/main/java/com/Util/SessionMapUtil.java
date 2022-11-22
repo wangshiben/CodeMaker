@@ -19,7 +19,10 @@ public class SessionMapUtil {
         if (key==null){
             return session;
         }
+
+
         HttpSession httpSession = map.get(key);
+
         return httpSession==null? session: httpSession;
     }
 

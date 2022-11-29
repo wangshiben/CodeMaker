@@ -30,11 +30,13 @@ public class MakerUtils {
         model.put("UpperKeyName", CharsUtil.UpperFirstCode(tables.getKeyName()));//首字母大写,方便调用Get/Set方法
         model.put("KeyType",tables.getKeyType());//主键类型
         model.put("UpperTable",tables.getUpperTable());//大写
+
         String templatePath = properties.getProperty("templatePath");
         File file=new File(templatePath);
         String absolutePath = file.getAbsolutePath();//获取模板名称的绝对路径名称,不然会报错
-        String outPath = properties.getProperty("outPath");
 
+
+        String outPath = properties.getProperty("outPath");
         File file1 =new File(outPath);
         String absolutePath1 = file1.getAbsolutePath();//获取输出名称的绝对路径,不然会报错
         if (sessionID!=null){

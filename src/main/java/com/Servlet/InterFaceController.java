@@ -124,6 +124,7 @@ public class InterFaceController {
             log.error("获取所有列名称失败"+e.getMessage());
             return BaseRespones.failed("获取所有数据库数据失败");
         }
+        log.info(lists.toString());
         return BaseRespones.success("获取所有数据成功",lists);
     }
     @GetMapping("/database/get_all")
@@ -145,7 +146,7 @@ public class InterFaceController {
             log.error(e.getMessage());
             BaseRespones.failed(e.getMessage());
         }
-
+        log.info(list.toString());
 
         return BaseRespones.success("获取成功",list);
     }

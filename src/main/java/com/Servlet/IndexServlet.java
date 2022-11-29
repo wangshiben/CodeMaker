@@ -83,11 +83,13 @@ public class IndexServlet {
             }
             session.setAttribute("colums",tables);//放入session域中
             request.setAttribute("colums",list);
+            log.info(list.toString());
         } catch (SQLException e) {
             e.printStackTrace();
         }catch (NullPointerException e){
             request.setAttribute("message","连接失败:服务器异常");
         }
+
         return "TableChoose";
     }
     @RequestMapping("/TableChoose")
@@ -106,7 +108,7 @@ public class IndexServlet {
                 list.add(columns.getString("COLUMN_NAME"));
             }
             request.setAttribute("cloum_name",list);
-
+            log.info(list.toString());
             String column_name;
             if (primaryKeys.next()){
                 //获取主键名称，若没有则要手动选择

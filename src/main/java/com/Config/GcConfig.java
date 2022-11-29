@@ -23,9 +23,10 @@ public class GcConfig {
     @Qualifier("getProper")
     private Properties properties;
 
-    @Scheduled(cron = "0 0 0/1 * * ? *")
+    @Scheduled(cron = "0 0 0/1 * * ?")
     public void RemoveOutTimeTask(){//每隔一小时监控session
         Map<String, HttpSession> map = SessionMapUtil.getMap();
+        if (Boolean.parseBoolean(properties.getProperty("online"))){
         Set<String> keys = map.keySet();//获取所有Session
         for (String key : keys) {
             HttpSession httpSession = map.get(key);
@@ -36,7 +37,10 @@ public class GcConfig {
                 file1=new File(absolutePath1);
                 Boolean aBoolean = FileUtils.deleteFile(file1);
                 log.info("删除已过期的ID:{},结果{}",key,aBoolean);
+                map.remove(key);
+                httpSession.invalidate();
             }
+        }
         }
 
     }

@@ -23,7 +23,7 @@ public BaseRespones<Integer> insert${UpperTable}( @RequestBody ${UpperTable} ${T
         return BaseRespones.success( ${TableName}Service.insert${UpperTable}(${TableName}));
         }
 @PostMapping("/update")
-public BaseRespones<Integer> update${UpperTable}(@Nullable ${UpperTable} ${TableName}){
+public BaseRespones<Integer> update${UpperTable}(@Nullable @RequestBody ${UpperTable} ${TableName}){
         log.info("update:" + ${TableName}.toString());
         return BaseRespones.success(${TableName}Service.update${UpperTable}(${TableName}));
         }//更新/修改

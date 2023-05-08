@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnClass(value = MybatisConfig.class)
 public class MybatisConfig {
     @Bean
-    public MybatisPlusInterceptor mybatisPlusInterceptor() {//配置分页插件
+    public MybatisPlusInterceptor mybatisPlusInterceptor() {//Mybatis-plus Page Plugins
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
         interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.POSTGRE_SQL));
         return interceptor;

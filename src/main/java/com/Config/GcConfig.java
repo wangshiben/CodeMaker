@@ -5,6 +5,7 @@ import com.Util.SessionMapUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -13,6 +14,7 @@ import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Random;
 import java.util.Set;
 
 @Configuration
@@ -22,6 +24,23 @@ public class GcConfig {
     @Autowired
     @Qualifier("getProper")
     private Properties properties;
+
+    public static String testWord="1111";
+
+
+//    @Scheduled(cron = "0/31 * * * * ?")
+//    public void Refersh(){
+//        testWord=(Math.random()*10)+"";
+//        log.info("定时void更新test->{}",testWord);
+//    }
+//    @Scheduled(cron = "0/10 * * * * ? ")
+//    public void MakeTestWord(){
+//        testWord="aaaaa";
+//        log.info("更新test->{}",testWord);
+//    }
+
+
+
 
     @Scheduled(cron = "0 0 0/1 * * ?")
     public void RemoveOutTimeTask(){//每隔一小时监控session
@@ -39,6 +58,7 @@ public class GcConfig {
                 log.info("删除已过期的ID:{},结果{}",key,aBoolean);
                 map.remove(key);
                 httpSession.invalidate();
+
             }
         }
         }

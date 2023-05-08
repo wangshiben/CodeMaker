@@ -1,5 +1,6 @@
 package com.Servlet;
 
+import com.Config.GcConfig;
 import com.Make.Center;
 import com.Pojo.Column;
 import com.Pojo.DBCConnection;
@@ -45,7 +46,7 @@ public class InterFaceController {
     String password;
 
     @GetMapping("/isconnect")
-    public BaseRespones<Boolean> IsConnect(HttpSession session,@RequestParam("JSESSIONID") String sessionID){
+    public BaseRespones<Boolean> IsConnect(HttpSession session,@RequestParam("JSESSIONID") String sessionID) throws SQLException, ClassNotFoundException {
         log.info("传入jessionID:"+ sessionID);
         session = SessionMapUtil.getSession(sessionID,session);
         log.info("sessionID:"+session.getId());
@@ -53,19 +54,13 @@ public class InterFaceController {
         return BaseRespones.failed("数据库连接失败:未设置数据库参数",false);
         }else {
             Connection connection=null;
-            try {
+
                 connection = JDBCutil.getConnection(url, new DBCConnection(userName, password));
-            } catch (SQLException | ClassNotFoundException e) {
-                e.printStackTrace();
-                return BaseRespones.failed("连接失败:参数错误", false);
-            }
+
             DatabaseMetaData metaData;
-            try {
+
                 metaData = connection.getMetaData();
-            } catch (SQLException e) {
-                log.error(e.getMessage());
-                return BaseRespones.failed("获取数据库元数据失败",false);
-            }
+
             session.setAttribute("metaData",metaData);
             return BaseRespones.success("连接数据库成功");
         }
@@ -213,6 +208,7 @@ public class InterFaceController {
 
         } catch (IOException | TemplateException e) {
             log.error("生成代码出错:"+e.getMessage());
+            e.printStackTrace();//打印出错的栈
             return BaseRespones.failed("生成代码出错:"+e.getMessage());
         }
         return BaseRespones.success("生成代码成功请在"+properties.getProperty("outPath")+"下查看");
@@ -239,6 +235,10 @@ public class InterFaceController {
         return BaseRespones.success("sucess:"+name,true);
     }
 
+    @GetMapping("/t")
+    public BaseRespones<String> get(){
+        return BaseRespones.success(GcConfig.testWord);
+    }
 
 
 

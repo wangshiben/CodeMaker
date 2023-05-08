@@ -4,10 +4,12 @@ import ${PackageName}.pojo.${UpperTable};
 import java.util.List;
 
 public interface ${UpperTable}Service {
-//增删改查
-    public Integer insert${UpperTable}(${UpperTable} ${TableName});//添加
-    public Integer update${UpperTable}(${UpperTable} ${TableName});//更新/修改
-    public Integer delete${UpperTable}(${KeyType} ${KeyName});//删除
-    public List<${UpperTable}> selectListOf${UpperTable}(Integer start, Integer size);//查询
-    public ${UpperTable} selectSingleOf${UpperTable}(${KeyType} ${KeyName});//查询单个
+//CRUD
+    public Integer insert${UpperTable}(${UpperTable} ${TableName});//insert
+    public Integer update${UpperTable}(${UpperTable} ${TableName});//update
+    public Integer delete${UpperTable}(${KeyType} ${KeyName});//delet
+    public List<${UpperTable}> selectListOf${UpperTable}(Integer start, Integer size);//query
+    public ${UpperTable} selectSingleOf${UpperTable}(${KeyType} ${KeyName});//single Select
+    public ${UpperTable} selectByKeyWord(String KeyWord, Object Value);//SelectByKeyWord
+    public ${UpperTable} selectByKeyWordPage(String KeyWord, Object Value,Integer start,Integer size);//
 }

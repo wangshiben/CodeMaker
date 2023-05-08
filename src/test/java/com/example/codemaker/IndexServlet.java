@@ -1,13 +1,15 @@
-package com.Servlet;
+package com.example.codemaker;
 
 
 import com.Pojo.Column;
-import com.Pojo.DBCConnection;
 import com.Pojo.Table;
+import com.Pojo.DBCConnection;
 import com.Util.ChangeTypeName;
+
 import com.Util.JDBCutil;
 import com.Util.MakerUtils;
 import freemarker.template.TemplateException;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -16,14 +18,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 @Controller
 @Slf4j

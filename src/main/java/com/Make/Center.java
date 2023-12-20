@@ -67,6 +67,7 @@ public class Center {
         //4.模板处理（文件生成）
         FileWriter fw = new FileWriter(file1);
 
+
         template.process(dataModel,fw);
         fw.close();
     }

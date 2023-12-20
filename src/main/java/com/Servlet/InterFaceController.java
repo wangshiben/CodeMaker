@@ -162,6 +162,7 @@ public class InterFaceController {
             ResultSet columns = metaData.getColumns(basename, null, table_name, null);//获取列的名称
             while (columns.next()){
                 list.add(columns.getString("COLUMN_NAME"));
+//                log.info("注释:{}",columns.getString("COLUMN_COMMENT"));
                 lists.add(new Column(columns.getString("COLUMN_NAME"), ChangeTypeName.Change(columns.getString("TYPE_NAME"),properties)));
             }
             if (primaryKeys.next()){
@@ -175,6 +176,7 @@ public class InterFaceController {
             }//keyName,table_name,lists,package_name,basename
 
             boolean online = Boolean.parseBoolean(properties.getProperty("online"));
+            log.info("是否为线上部署:{}",online);
             if (online){//判断是否为线上部署
                 MakerUtils.MakeCode(keyName,table_name,lists,package_name,basename,properties,log, session.getId());
             }else {

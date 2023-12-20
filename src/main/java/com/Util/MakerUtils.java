@@ -40,7 +40,7 @@ public class MakerUtils {
         File file1 =new File(outPath);
         String absolutePath1 = file1.getAbsolutePath();//获取输出名称的绝对路径,不然会报错
         if (sessionID!=null){
-            absolutePath1+="\\\\"+sessionID;
+            absolutePath1+="/"+sessionID;
         }
         log.info(file.getAbsolutePath());//打印模板的绝对路径
         Center center=new Center(absolutePath,absolutePath1);

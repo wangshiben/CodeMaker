@@ -103,6 +103,7 @@ public class IndexServlet {
             List<Column> lists=new ArrayList<>();
 
             while (columns.next()){
+                log.info("注释:{}","");
                 lists.add(new Column(columns.getString("COLUMN_NAME"),ChangeTypeName.Change(columns.getString("TYPE_NAME"),properties)));
                 list.add(columns.getString("COLUMN_NAME"));
             }
